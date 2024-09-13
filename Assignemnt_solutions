@@ -1,0 +1,74 @@
+Question 1: By default are django signals executed synchronously or asynchronously?
+
+By default, Django signals are executed synchronously. This means that the signal handler will be executed immediately after the event that triggered it.
+
+Code :
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .models import MyModel
+
+@receiver(post_save, sender=MyModel)
+def my_signal_handler(sender,   
+ instance, **kwargs):
+    print("Signal handler executed synchronously")
+
+
+Question 2: Do django signals run in the same thread as the caller?
+
+Yes, by default, Django signals run in the same thread as the caller. This means that the signal handler will be executed in the same thread as the code that triggered the signal.
+
+Code :
+import threading
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from .models import MyModel
+
+def my_thread_function():
+    MyModel.objects.create(name="Test")
+
+thread = threading.Thread(target=my_thread_function)
+thread.start()
+thread.join()
+
+
+
+Question 3: By default do django signals run in the same database transaction as the caller?
+Yes, by default, Django signals run in the same database transaction as the caller. This means that any changes made to the database in the signal handler will be part of the same transaction as the changes that triggered the signal.
+
+Code :
+
+from django.db import transaction
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from   
+ .models import MyModel
+
+@receiver(post_save, sender=MyModel)
+def my_signal_handler(sender,   
+ instance, **kwargs):
+    with transaction.atomic():
+        print("Signal handler executed in the same transaction")
+
+
+
+
+Custom Classes in Python
+
+
+class Rectangle:
+    def __init__(self, length: int, width: int):
+        self.length = length
+        self.width = width
+
+    def __iter__(self):
+        yield {'length': self.length}
+        yield {'width': self.width}
+
+# Example
+rect = Rectangle(5, 3)
+for item in rect:
+    print(item)
+
+
